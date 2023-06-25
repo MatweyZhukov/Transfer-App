@@ -1,0 +1,28 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main h1 {
+  margin-bottom: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 35px;
+  width: 700px;
+  font-weight: 300;
+}
+
+.main .link {
+  outline: none;
+  font-weight: 300;
+  width: 200px;
+  height: 60px;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  font-size: 25px;
+}
