@@ -11,7 +11,7 @@ function Input({
     <input
       checked={checked}
       className={className}
-      value={value}
+      value={String(value)}
       placeholder={placeholder}
       type={type}
       onChange={readOnly ? null : onChange}

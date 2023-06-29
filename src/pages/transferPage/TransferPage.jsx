@@ -1,10 +1,11 @@
 //Components
 import Button from "../../components/UI/buttons/Button";
 import BlockInput from "../../components/blockInput/BlockInput";
+import Modal from "../../components/modal/Modal";
 
 //Global
 import { useState } from "react";
-import useGetCurrent from "../../hooks/http.hook";
+import getData from "../../hooks/http.hook";
 
 //Styles
 import "./transferPage.css";
@@ -16,19 +17,43 @@ function TransferPage({ clearValue }) {
   const [optionFrom, setOptionFrom] = useState(""),
     [optionTo, setOptionTo] = useState("");
 
-  const getCurrent = useGetCurrent;
+  const [modal, setModal] = useState(false);
+
+  const [disabled, setDisabled] = useState(false);
+
+  let modalClassName = "modal",
+    modalContentClassName = "modal-content";
+
+  if (!modal) {
+    modalClassName += " modal-hidden";
+    modalContentClassName += " modal-content-hidden";
+  } else {
+    modalClassName += " modal-opened";
+    modalContentClassName += " modal-content-opened";
+  }
+
+  function changeModalStatus() {
+    if (!fromCurrency || !optionFrom || !optionTo) {
+      setModal(!modal);
+      setDisabled(!disabled);
+    }
+  }
 
   function changeCurrencyOption() {
-    getCurrent("https://www.cbr-xml-daily.ru/latest.js")
+    getData("https://www.cbr-xml-daily.ru/latest.js")
       .then((data) => {
-        const result = (
-          (fromCurrency / data.rates[optionFrom]) *
-          data.rates[optionTo]
-        ).toFixed(3);
+        const currValue = fromCurrency / data.rates[optionFrom],
+          result = currValue * data.rates[optionTo];
 
-        setToCurrency(result);
+        if (fromCurrency && optionFrom && optionTo) {
+          setToCurrency(() => {
+            return result % 1 === 0 ? result : result.toFixed(5);
+          });
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 
   return (
@@ -45,13 +70,25 @@ function TransferPage({ clearValue }) {
 
       <div className="buttons">
         <Button
-          onClick={changeCurrencyOption}
+          onClick={() => {
+            changeCurrencyOption();
+            changeModalStatus();
+          }}
+          disabled={disabled}
           type="button"
           title={"transfer"}
         />
+
         <Button
           type="button"
-          onClick={() => clearValue([setFromCurrency, setToCurrency])}
+          onClick={() =>
+            clearValue([
+              setFromCurrency,
+              setToCurrency,
+              setOptionFrom,
+              setOptionTo,
+            ])
+          }
           title={"clear"}
         />
       </div>
@@ -63,6 +100,12 @@ function TransferPage({ clearValue }) {
         option={optionTo}
         setOption={setOptionTo}
         placeholder={"to..."}
+      />
+
+      <Modal
+        onClick={changeModalStatus}
+        modalClassName={modalClassName}
+        modalContentClassName={modalContentClassName}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 //Global
 import { useEffect, useState } from "react";
-import useGetCurrent from "../../hooks/http.hook";
+import getData from "../../hooks/http.hook";
 import { v4 as uuidv4 } from "uuid";
 
 //Components
@@ -19,10 +19,8 @@ function BlockInput({
 }) {
   const [options, setOptions] = useState([]);
 
-  const showOptions = useGetCurrent;
-
   useEffect(() => {
-    showOptions("https://www.cbr-xml-daily.ru/latest.js")
+    getData("https://www.cbr-xml-daily.ru/latest.js")
       .then((data) => {
         setOptions(() => {
           const optionsArr = Object.entries(data.rates);
@@ -44,14 +42,17 @@ function BlockInput({
         placeholder={placeholder}
         type="number"
       />
-      <select value={option} onChange={(e) => setOption(e.target.value)}>
-        <option value={"Currency..."}>Currency...</option>
 
-        {options.map((option) => (
-          <option value={option} key={uuidv4()}>
-            {option}
-          </option>
-        ))}
+      <select value={option} onChange={(e) => setOption(e.target.value)}>
+        <option value="Currency...">Currency...</option>
+        {options.map((option) => {
+          const id = uuidv4();
+          return (
+            <option value={option} key={id}>
+              {option}
+            </option>
+          );
+        })}
       </select>
     </div>
   );
