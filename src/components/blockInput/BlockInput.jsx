@@ -22,11 +22,11 @@ function BlockInput({
   useEffect(() => {
     getData("https://www.cbr-xml-daily.ru/latest.js")
       .then((data) => {
-        setOptions(() => {
-          const optionsArr = Object.entries(data.rates);
-          optionsArr.forEach((item) => item.pop());
-          return optionsArr;
-        });
+        const optionsArr = Object.entries(data.rates);
+        optionsArr.forEach((item) => item.pop());
+        const resultArr = optionsArr.map((option) => option[0]);
+
+        setOptions(resultArr);
       })
       .catch((err) => console.log(err));
 
@@ -45,6 +45,7 @@ function BlockInput({
 
       <select value={option} onChange={(e) => setOption(e.target.value)}>
         <option value="Currency...">Currency...</option>
+
         {options.map((option) => {
           const id = uuidv4();
           return (

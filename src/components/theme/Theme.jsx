@@ -1,7 +1,7 @@
 //Global
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme, GlobalStyles } from "./ChangeTheme";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 //Components
 import Input from "../UI/inputs/Input";
@@ -10,23 +10,15 @@ import Input from "../UI/inputs/Input";
 import "./theme.css";
 
 function Theme() {
-  const [theme, setTheme] = useState(localStorage.getItem("theme")),
-    [checkbox, setCheckbox] = useState(localStorage.getItem("checkbox"));
-
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    localStorage.setItem("checkbox", checkbox);
-  }, [checkbox]);
+  const [theme, setTheme] = useState("light"),
+    [checkbox, setCheckbox] = useState(undefined);
 
   function switchTheme() {
     setTheme(theme === "light" ? "dark" : "light");
   }
 
   function switchCheckbox() {
-    setCheckbox(checkbox === "" ? "checked" : "");
+    setCheckbox(checkbox && undefined);
   }
 
   return (

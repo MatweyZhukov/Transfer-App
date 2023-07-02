@@ -1,20 +1,11 @@
-function Input({
-  className,
-  value,
-  placeholder,
-  type,
-  readOnly,
-  onChange,
-  checked,
-}) {
+function Input({ value, placeholder, type, readOnly, onChange, checked }) {
   return (
     <input
       checked={checked}
-      className={className}
       value={String(value)}
       placeholder={placeholder}
       type={type}
-      onChange={readOnly ? null : onChange}
+      onChange={readOnly ? undefined : onChange}
       readOnly={readOnly}
     />
   );

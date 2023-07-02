@@ -42,13 +42,11 @@ function TransferPage({ clearValue }) {
   function changeCurrencyOption() {
     getData("https://www.cbr-xml-daily.ru/latest.js")
       .then((data) => {
-        const currValue = fromCurrency / data.rates[optionFrom],
+        const currValue = Number(fromCurrency) / data.rates[optionFrom],
           result = currValue * data.rates[optionTo];
 
         if (fromCurrency && optionFrom && optionTo) {
-          setToCurrency(() => {
-            return result % 1 === 0 ? result : result.toFixed(5);
-          });
+          setToCurrency(result % 1 === 0 ? result : result.toFixed(5));
         }
       })
       .catch((err) => {
