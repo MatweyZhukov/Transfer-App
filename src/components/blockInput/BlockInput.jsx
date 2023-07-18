@@ -1,7 +1,7 @@
 //Global
 import { useEffect, useState } from "react";
-import getData from "../../hooks/http.hook";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 //Components
 import Input from "../../components/UI/inputs/Input";
@@ -19,16 +19,22 @@ function BlockInput({
 }) {
   const [options, setOptions] = useState([]);
 
-  useEffect(() => {
-    getData("https://www.cbr-xml-daily.ru/latest.js")
-      .then((data) => {
-        const optionsArr = Object.entries(data.rates);
-        optionsArr.forEach((item) => item.pop());
-        const resultArr = optionsArr.map((option) => option[0]);
+  async function fetchOptions(url) {
+    try {
+      const response = await axios.get(url);
 
-        setOptions(resultArr);
-      })
-      .catch((err) => console.log(err));
+      const optionsArr = Object.entries(response.data.rates);
+      optionsArr.forEach((item) => item.pop());
+      const resultArr = optionsArr.map((option) => option[0]);
+
+      setOptions(resultArr);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    fetchOptions("https://www.cbr-xml-daily.ru/latest.js");
 
     //eslint-disable-next-line
   }, []);

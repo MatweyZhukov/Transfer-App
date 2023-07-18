@@ -5,7 +5,7 @@ import Modal from "../../components/modal/Modal";
 
 //Global
 import { useState } from "react";
-import getData from "../../hooks/http.hook";
+import axios from "axios";
 
 //Styles
 import "./transferPage.css";
@@ -32,26 +32,42 @@ function TransferPage({ clearValue }) {
     modalContentClassName += " modal-content-opened";
   }
 
+  async function fetchCurrencies(url) {
+    try {
+      const response = await axios.get(url);
+
+      const currValue = Number(fromCurrency) / response.data.rates[optionFrom],
+        result = currValue * response.data.rates[optionTo];
+
+      if (
+        fromCurrency &&
+        optionFrom &&
+        optionTo &&
+        optionFrom !== "Currency..." &&
+        optionTo !== "Currency..."
+      ) {
+        setToCurrency(result % 1 === 0 ? result : result.toFixed(5));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function changeModalStatus() {
-    if (!fromCurrency || !optionFrom || !optionTo) {
+    if (
+      !fromCurrency ||
+      !optionFrom ||
+      !optionTo ||
+      optionFrom === "Currency..." ||
+      optionTo === "Currency..."
+    ) {
       setModal(!modal);
       setDisabled(!disabled);
     }
   }
 
   function changeCurrencyOption() {
-    getData("https://www.cbr-xml-daily.ru/latest.js")
-      .then((data) => {
-        const currValue = Number(fromCurrency) / data.rates[optionFrom],
-          result = currValue * data.rates[optionTo];
-
-        if (fromCurrency && optionFrom && optionTo) {
-          setToCurrency(result % 1 === 0 ? result : result.toFixed(5));
-        }
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+    fetchCurrencies("https://www.cbr-xml-daily.ru/latest.js", setToCurrency);
   }
 
   return (
