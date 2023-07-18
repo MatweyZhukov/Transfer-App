@@ -1,10 +1,10 @@
 //Global
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 
 //Components
 import Input from "../../components/UI/inputs/Input";
+import OptionsList from "../optionsList/OptionsList";
 
 //Styles
 import "./blockInput.css";
@@ -51,15 +51,7 @@ function BlockInput({
 
       <select value={option} onChange={(e) => setOption(e.target.value)}>
         <option value="Currency...">Currency...</option>
-
-        {options.map((option) => {
-          const id = uuidv4();
-          return (
-            <option value={option} key={id}>
-              {option}
-            </option>
-          );
-        })}
+        <OptionsList options={options} />
       </select>
     </div>
   );

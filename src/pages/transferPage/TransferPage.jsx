@@ -10,12 +10,12 @@ import axios from "axios";
 //Styles
 import "./transferPage.css";
 
-function TransferPage({ clearValue }) {
+function TransferPage() {
   const [fromCurrency, setFromCurrency] = useState(""),
     [toCurrency, setToCurrency] = useState("");
 
-  const [optionFrom, setOptionFrom] = useState(""),
-    [optionTo, setOptionTo] = useState("");
+  const [optionFrom, setOptionFrom] = useState("Currency..."),
+    [optionTo, setOptionTo] = useState("Currency...");
 
   const [modal, setModal] = useState(false);
 
@@ -36,13 +36,11 @@ function TransferPage({ clearValue }) {
     try {
       const response = await axios.get(url);
 
-      const currValue = Number(fromCurrency) / response.data.rates[optionFrom],
+      const currValue = +fromCurrency / response.data.rates[optionFrom],
         result = currValue * response.data.rates[optionTo];
 
       if (
         fromCurrency &&
-        optionFrom &&
-        optionTo &&
         optionFrom !== "Currency..." &&
         optionTo !== "Currency..."
       ) {
@@ -56,8 +54,6 @@ function TransferPage({ clearValue }) {
   function changeModalStatus() {
     if (
       !fromCurrency ||
-      !optionFrom ||
-      !optionTo ||
       optionFrom === "Currency..." ||
       optionTo === "Currency..."
     ) {
@@ -66,12 +62,19 @@ function TransferPage({ clearValue }) {
     }
   }
 
-  function changeCurrencyOption() {
+  function changeCurrencyOption(e) {
+    e.preventDefault();
     fetchCurrencies("https://www.cbr-xml-daily.ru/latest.js", setToCurrency);
   }
 
   return (
-    <div className="transfer">
+    <form
+      onSubmit={(e) => {
+        changeCurrencyOption(e);
+        changeModalStatus();
+      }}
+      className="transfer"
+    >
       <h1>Transfer to currency</h1>
 
       <BlockInput
@@ -83,26 +86,16 @@ function TransferPage({ clearValue }) {
       />
 
       <div className="buttons">
-        <Button
-          onClick={() => {
-            changeCurrencyOption();
-            changeModalStatus();
-          }}
-          disabled={disabled}
-          type="button"
-          title={"transfer"}
-        />
+        <Button disabled={disabled} type="submit" title={"transfer"} />
 
         <Button
           type="button"
-          onClick={() =>
-            clearValue([
-              setFromCurrency,
-              setToCurrency,
-              setOptionFrom,
-              setOptionTo,
-            ])
-          }
+          onClick={() => {
+            setFromCurrency("");
+            setToCurrency("");
+            setOptionFrom("");
+            setOptionTo("");
+          }}
           title={"clear"}
         />
       </div>
@@ -121,7 +114,7 @@ function TransferPage({ clearValue }) {
         modalClassName={modalClassName}
         modalContentClassName={modalContentClassName}
       />
-    </div>
+    </form>
   );
 }
 

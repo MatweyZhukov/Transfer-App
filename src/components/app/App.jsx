@@ -8,10 +8,6 @@ import TransferPage from "../../pages/transferPage/TransferPage";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 function App() {
-  function clearValue(functions) {
-    functions.forEach((func) => func(""));
-  }
-
   return (
     <BrowserRouter basename="/">
       <Navigation />
@@ -19,10 +15,7 @@ function App() {
       <div className="app">
         <Routes>
           <Route element={<Main />} path="/"></Route>
-          <Route
-            element={<TransferPage clearValue={clearValue} />}
-            path="/transfer"
-          />
+          <Route element={<TransferPage />} path="/transfer" />
         </Routes>
       </div>
     </BrowserRouter>
